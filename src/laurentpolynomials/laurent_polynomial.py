@@ -16,7 +16,7 @@ class InputValidation:
         self._validate_order(order)
 
     def _validate_term(self,
-                       term: str) -> str:
+                       term: str):
 
         if type(term) != str:
             raise TypeError("The term must be a string")
@@ -30,7 +30,7 @@ class InputValidation:
         self.term = term
 
     def _validate_coefficients(self,
-                               coefficients: list[Union[int, float]]) -> list[Union[int, float]]:
+                               coefficients: list[Union[int, float]]):
 
         if type(coefficients) in [int, float]:
             warn("The coefficients should be a list, not a single number. Converting to a list")
@@ -47,7 +47,7 @@ class InputValidation:
 
 
     def _validate_exponents(self,
-                            exponents: list[Union[int, float]]) -> list[Union[int, float]]:
+                            exponents: list[Union[int, float]]):
 
         # TODO Can Laurent polynomials have negative exponents?
         # TODO Can Laurent polynomials have zero exponents?
@@ -67,7 +67,7 @@ class InputValidation:
         self.exponents = exponents
 
     def _validate_order(self,
-                        order: str) -> str:
+                        order: str):
 
         if type(order) != str:
             raise TypeError("The order must be a string")
