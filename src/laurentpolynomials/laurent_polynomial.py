@@ -136,6 +136,7 @@ class LaurentPolynomial(InputValidation):
 
         else:
 
+            term_index = 0 # The index of the current term
             polynomial = ""
 
             for coefficient, exponent in zip(self.coefficients, self.exponents):
@@ -144,16 +145,18 @@ class LaurentPolynomial(InputValidation):
 
                 # First, determine whether a leading + or - sign is needed
 
-                # If this is the first term, then don't show the addition sign (e.g., +1+x^2 --> 1+x^2)
+                # If this is the first term, then don't show the addition sign (e.g., +1+x**2 --> 1+x**2)
                 # Note: It is okay to display a leading minus sign
-                if self.coefficients.index(coefficient) == 0 and coefficient >= 0:
+                if term_index == 0 and coefficient >= 0:
                     pass
-                elif coefficient > 0:
-                    polynomial += "+"
+                # elif coefficient > 0:
+                #     polynomial += "+"
                 elif coefficient == 0:
                     pass
                 elif coefficient < 0:
                     polynomial += "-"
+                else:
+                    polynomial += "+"
 
                 # Next, determine how to show the coefficient
 
@@ -161,7 +164,7 @@ class LaurentPolynomial(InputValidation):
                 if coefficient == 0:
                     pass
 
-                # Don't show a coefficient of one if the exponent is nonzero (e.g., 1x^2 --> x^2)
+                # Don't show a coefficient of one if the exponent is nonzero (e.g., 1x**2 --> x**2)
                 elif coefficient == 1 and exponent != 0:
                     pass
 
@@ -171,7 +174,7 @@ class LaurentPolynomial(InputValidation):
 
                 # Next, determine how to show the term
 
-                # If the exponent is zero, then don't show the term (e.g., 3x^0 --> 3)
+                # If the exponent is zero, then don't show the term (e.g., 3x**0 --> 3)
                 if exponent == 0:
                     pass
 
@@ -180,11 +183,13 @@ class LaurentPolynomial(InputValidation):
 
                 # Finally, determine how to show the exponent
 
-                # Don't show an exponent of zero or one (e.g., A^0 --> A, A^1 --> A)
+                # Don't show an exponent of zero or one (e.g., A**0 --> A, A**1 --> A)
                 if exponent == 0 or exponent == 1:
                     pass
                 else:
-                    polynomial += "^" + str(exponent)
+                    polynomial += "**" + str(exponent)
+
+                term_index += 1
 
             return polynomial
 
@@ -225,7 +230,7 @@ class LaurentPolynomial(InputValidation):
     def __mul__(self, multiple):
 
         """
-        (1+x) * (1+x) = (1+x)^2 = 1 + 2x + x^2
+        (1+x) * (1+x) = (1+x)**2 = 1 + 2x + x**2
 
         TODO check if need to expand...
         TODO fix object creation statement
@@ -303,7 +308,11 @@ class LaurentPolynomial(InputValidation):
         pass
 
 
-A = LaurentPolynomial('A')  
+A = LaurentPolynomial('A')
+
+aa = (A+1)*(A+1)
+
+print(aa)
 
 # print('A', A)
 #
