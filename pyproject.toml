@@ -20,7 +20,7 @@ classifiers = [
 dependencies = [
 "numpy<=1.22.4",
 "pytest",
-"sphinx",
+"sphinx"
 ]
 
 [project.urls]
