@@ -33,7 +33,6 @@ class InputValidation:
                                coefficients: list[Union[int, float]]):
 
         if type(coefficients) in [int, float]:
-            warn("The coefficients should be a list, not a single number. Converting to a list")
             coefficients = [coefficients]
 
         if type(coefficients) != list:
@@ -241,10 +240,13 @@ class LaurentPolynomial(InputValidation):
         # Ensure the input being multiple (the multiple) is a LaurentPolynomial or throw an error
         multiple = self._format_polynomial(multiple)
 
+        # If either polynomial is zero, then the product is zero
+        if repr(multiple) == "0":
+            return LaurentPolynomial(self.term, coefficients=[0], exponents=[0])
+
         product_coefficients = []
         product_exponents = []
 
-    
         for multiple_coefficient, multiple_exponent in zip(multiple.coefficients, multiple.exponents):
 
 
@@ -264,6 +266,8 @@ class LaurentPolynomial(InputValidation):
 
 
     def __pow__(self, power):
+
+        # TODO Verify negative exponentiation works properly
         
         polynomial = copy.deepcopy(self)
 
@@ -273,7 +277,22 @@ class LaurentPolynomial(InputValidation):
         return polynomial
 
     # TODO Implement __truediv__ method?
+
+    def __truediv__(self, divisor):
+
+        # Ensure the input being divided (the divisor) is a LaurentPolynomial or throw an error
+        divisor = self._format_polynomial(divisor)
+
+        if repr(divisor) == "0":
+            raise ZeroDivisionError("Cannot divide by zero")
+
+
+
+
+
+        raise NotImplementedError
     # TODO Implement __floordiv__ method?
+    # TODO Implement reverse division methods
     # TODO Implement _normalize method?
     # TODO Implement _sort method?
 
