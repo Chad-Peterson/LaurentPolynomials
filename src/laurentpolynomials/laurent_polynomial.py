@@ -1,3 +1,7 @@
+"""
+
+"""
+
 from typing import Union
 from warnings import warn
 import copy
@@ -5,32 +9,32 @@ import copy
 
 class InputValidation:
     def __init__(self,
-                 term:         str,
-                 coefficients: list[Union[int, float]],
-                 exponents:    list[Union[int, float]],
-                 order:        str):
+                 indeterminate:  str,
+                 coefficients:  list[Union[int, float]],
+                 exponents:     list[Union[int, float]],
+                 order:         str):
 
-        self._validate_term(term)
-        self._validate_coefficients(coefficients)
-        self._validate_exponents(exponents)
-        self._validate_order(order)
+        self.indeterminate = self._validate_indeterminate(indeterminate)
+        self.coefficients  = self._validate_coefficients(coefficients)
+        self.exponents     = self._validate_exponents(exponents)
+        self.order         = self._validate_order(order)
 
-    def _validate_term(self,
-                       term: str):
+    @staticmethod
+    def _validate_indeterminate(indeterminate: str) -> str:
 
-        if type(term) != str:
-            raise TypeError("The term must be a string")
+        if type(indeterminate) != str:
+            raise TypeError("The indeterminate must be a string")
 
-        if term == 'Chad':
-            raise ValueError("While Chad is an awesome name, the term must be a single character")
+        if indeterminate == 'Chad':
+            raise ValueError("While Chad is an awesome name, the indeterminate must be a single character")
 
-        if len(term) != 1:
-            raise ValueError("The term must be a single character")
+        if len(indeterminate) != 1:
+            raise ValueError("The indeterminate must be a single character")
 
-        self.term = term
+        return indeterminate
 
-    def _validate_coefficients(self,
-                               coefficients: list[Union[int, float]]):
+    @staticmethod
+    def _validate_coefficients(coefficients: list[Union[int, float]]) -> list[Union[int,float]]:
 
         if type(coefficients) in [int, float]:
             coefficients = [coefficients]
@@ -42,11 +46,10 @@ class InputValidation:
             if type(coefficient) not in [int, float]:
                 raise TypeError("The coefficients must be integers or floats")
 
-        self.coefficients = coefficients
+        return coefficients
 
-
-    def _validate_exponents(self,
-                            exponents: list[Union[int, float]]):
+    @staticmethod
+    def _validate_exponents(exponents: list[Union[int, float]]) -> list[Union[int, float]]:
 
         # TODO Can Laurent polynomials have negative exponents?
         # TODO Can Laurent polynomials have zero exponents?
@@ -63,10 +66,10 @@ class InputValidation:
             if type(exponent) not in [int, float]:
                 raise TypeError("The exponents must be integers or floats")
 
-        self.exponents = exponents
+        return exponents
 
-    def _validate_order(self,
-                        order: str):
+    @staticmethod
+    def _validate_order(order: str) -> str:
 
         if type(order) != str:
             raise TypeError("The order must be a string")
@@ -74,7 +77,7 @@ class InputValidation:
         if order not in ['increasing', 'decreasing']:
             raise ValueError("The order must be either 'increasing' or 'decreasing'")
 
-        self.order = order
+        return order
 
     def _format_polynomial(self, user_input):
         """_check_input_format Converts input to LaurentPolynomial for arithmetic operations
@@ -93,7 +96,7 @@ class InputValidation:
             warn("Converting input to a LaurentPolynomial with a single term")
             coefficients = [user_input]
             exponents = [0]
-            return LaurentPolynomial(self.term, coefficients=coefficients, exponents=exponents)
+            return LaurentPolynomial(self.indeterminate, coefficients=coefficients, exponents=exponents)
 
         else:
             raise TypeError("Polynomial must be of type LaurentPolynomial, int, or float")
@@ -101,16 +104,16 @@ class InputValidation:
 
 class LaurentPolynomial(InputValidation):
 
-    def __init__(self, term, coefficients=[1], exponents=[1], order='increasing', normalize=False):
+    def __init__(self, indeterminate, coefficients=[1], exponents=[1], order='increasing', normalize=False):
         """
         LaurentPolynomial Class for representing Laurent polynomials
-        
+
         TODO Implement input checking e.g., empty inputs or uneven order
-        TODO Make kwargs immutable?
+        TODO Make kwargs immutable? Change default argument from list to tuple
         TODO Implement normalization
 
-        :param term: The character used to represent the polynomial
-        :type term: str
+        :param indeterminate: The character used to represent the polynomial
+        :type indeterminate: str
         :param coefficients: The coefficients of the polynomial
         :type coefficients: list
         :param exponents: The orders of the polynomial
@@ -118,7 +121,7 @@ class LaurentPolynomial(InputValidation):
         param order: The order in which the polynomial is represented (i.e., "increasing" or "decreasing")
         :type order: str
         """
-        super(LaurentPolynomial, self).__init__(term, coefficients, exponents, order)
+        super(LaurentPolynomial, self).__init__(indeterminate, coefficients, exponents, order)
 
         self._simplify_expression()
 
@@ -129,7 +132,7 @@ class LaurentPolynomial(InputValidation):
         # TODO Implement the self.order kwargs
         # TODO Implement the power sign as a carrot or an asterisk?
 
-        # If the polynomial only contains a single term with a coefficient of zero, then the polynomial is zero
+        # If the polynomial only contains a single indeterminate with a coefficient of zero, then the polynomial is zero
         if self.coefficients == [0] and self.exponents == [0]:
             return "0"
 
@@ -178,7 +181,7 @@ class LaurentPolynomial(InputValidation):
                     pass
 
                 else:
-                    polynomial += self.term
+                    polynomial += self.indeterminate
 
                 # Finally, determine how to show the exponent
 
@@ -214,7 +217,7 @@ class LaurentPolynomial(InputValidation):
                 sum_coefficients.append(addend_coefficient)
                 sum_exponents.append(addend_exponent)
 
-        return LaurentPolynomial(self.term, coefficients=sum_coefficients, exponents=sum_exponents)
+        return LaurentPolynomial(self.indeterminate, coefficients=sum_coefficients, exponents=sum_exponents)
 
     def __radd__(self, addend):
         return self.__add__(addend)
@@ -255,7 +258,7 @@ class LaurentPolynomial(InputValidation):
                 product_coefficients.append(multiple_coefficient * coefficient)
                 product_exponents.append(multiple_exponent + exponent)
 
-        return LaurentPolynomial(self.term, coefficients=product_coefficients, exponents=product_exponents)
+        return LaurentPolynomial(self.indeterminate, coefficients=product_coefficients, exponents=product_exponents)
 
 
     def __imul__(self, multiple):
