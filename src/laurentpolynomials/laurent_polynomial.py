@@ -8,11 +8,14 @@ import copy
 
 
 class InputValidation:
+    """
+    TODO Can exponents be any real number? Only integers?
+    """
     def __init__(self,
                  indeterminate:  str,
-                 coefficients:  list[Union[int, float]],
-                 exponents:     list[Union[int, float]],
-                 order:         str):
+                 coefficients:   tuple[Union[int, float]],
+                 exponents:      tuple[Union[int, float]],
+                 order:          str):
 
         self.indeterminate = self._validate_indeterminate(indeterminate)
         self.coefficients  = self._validate_coefficients(coefficients)
@@ -34,13 +37,18 @@ class InputValidation:
         return indeterminate
 
     @staticmethod
-    def _validate_coefficients(coefficients: list[Union[int, float]]) -> list[Union[int,float]]:
+    def _validate_coefficients(coefficients: tuple[Union[int, float]]) -> tuple[Union[int, float]]:
 
         if type(coefficients) in [int, float]:
-            coefficients = [coefficients]
+            coefficients = (coefficients,)
 
-        if type(coefficients) != list:
-            raise TypeError("The coefficients must be a list")
+        if type(coefficients) != tuple:
+
+            if type(coefficients) == list:
+                warn("The coefficients should be a tuple, not a list. Converting to a tuple")
+                coefficients = tuple(coefficients)
+            else:
+                raise TypeError("The coefficients must be a tuple")
 
         for coefficient in coefficients:
             if type(coefficient) not in [int, float]:
@@ -49,18 +57,23 @@ class InputValidation:
         return coefficients
 
     @staticmethod
-    def _validate_exponents(exponents: list[Union[int, float]]) -> list[Union[int, float]]:
+    def _validate_exponents(exponents: tuple[Union[int, float]]) -> tuple[Union[int, float]]:
 
         # TODO Can Laurent polynomials have negative exponents?
         # TODO Can Laurent polynomials have zero exponents?
         # TODO Can Laurent polynomials have non-integer exponents?
 
         if type(exponents) in [int, float]:
-            warn("The exponents should be a list, not a single number. Converting to a list")
-            exponents = [exponents]
+            warn("The exponents should be a tuple, not a single number. Converting to a list")
+            exponents = (exponents,)
 
-        if type(exponents) != list:
-            raise TypeError("The exponents must be a list")
+        if type(exponents) != tuple:
+
+            if type(exponents) == list:
+                warn("The exponents should be a tuple, not a list. Converting to a tuple")
+                exponents = tuple(exponents)
+            else:
+                raise TypeError("The exponents must be a tuple")
 
         for exponent in exponents:
             if type(exponent) not in [int, float]:
@@ -94,8 +107,8 @@ class InputValidation:
 
         elif isinstance(user_input, int) or isinstance(user_input, float):
             warn("Converting input to a LaurentPolynomial with a single term")
-            coefficients = [user_input]
-            exponents = [0]
+            coefficients = (user_input,)
+            exponents    = (0,)
             return LaurentPolynomial(self.indeterminate, coefficients=coefficients, exponents=exponents)
 
         else:
@@ -104,22 +117,31 @@ class InputValidation:
 
 class LaurentPolynomial(InputValidation):
 
-    def __init__(self, indeterminate, coefficients=[1], exponents=[1], order='increasing', normalize=False):
+    def __init__(self,
+                 indeterminate: str,
+                 coefficients:  tuple[Union[int, float]] = (1,),
+                 exponents:     tuple[Union[int, float]] = (1,),
+                 order:         str = 'increasing',
+                 normalize:     bool = False):
         """
         LaurentPolynomial Class for representing Laurent polynomials
 
-        TODO Implement input checking e.g., empty inputs or uneven order
-        TODO Make kwargs immutable? Change default argument from list to tuple
-        TODO Implement normalization
+        TODO Implement __floordiv__ method?
+        TODO Implement reverse division methods
+        TODO Implement _normalize method
+        TODO Implement _sort method?
+        TODO finish switching lists to tuples in the various methods
 
         :param indeterminate: The character used to represent the polynomial
         :type indeterminate: str
         :param coefficients: The coefficients of the polynomial
-        :type coefficients: list
+        :type coefficients: tuple
         :param exponents: The orders of the polynomial
-        :type exponents: list
+        :type exponents: tuple
         param order: The order in which the polynomial is represented (i.e., "increasing" or "decreasing")
         :type order: str
+        :param normalize: Whether or not to normalize the polynomial
+        :type normalize: bool
         """
         super(LaurentPolynomial, self).__init__(indeterminate, coefficients, exponents, order)
 
@@ -138,7 +160,7 @@ class LaurentPolynomial(InputValidation):
 
         else:
 
-            term_index = 0 # The index of the current term
+            term_index = 0  # The index of the current term
             polynomial = ""
 
             for coefficient, exponent in zip(self.coefficients, self.exponents):
@@ -289,15 +311,7 @@ class LaurentPolynomial(InputValidation):
         if repr(divisor) == "0":
             raise ZeroDivisionError("Cannot divide by zero")
 
-
-
-
-
         raise NotImplementedError
-    # TODO Implement __floordiv__ method?
-    # TODO Implement reverse division methods
-    # TODO Implement _normalize method?
-    # TODO Implement _sort method?
 
     def _simplify_expression(self):
         
