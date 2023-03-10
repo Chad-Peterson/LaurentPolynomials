@@ -6,3 +6,8 @@ venv/*
 dist/*
 SPI2Py.egg-info/*
 .vscode/
+/src/laurentpolynomials.egg-info/dependency_links.txt
+/src/laurentpolynomials.egg-info/PKG-INFO
+/src/laurentpolynomials.egg-info/requires.txt
+/src/laurentpolynomials.egg-info/SOURCES.txt
+/src/laurentpolynomials.egg-info/top_level.txt
