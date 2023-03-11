@@ -5,6 +5,7 @@
 from typing import Union
 from warnings import warn
 import copy
+from sympy import symbols, Poly
 
 
 class InputValidation:
@@ -27,6 +28,9 @@ class InputValidation:
 
         if type(indeterminate) != str:
             raise TypeError("The indeterminate must be a string")
+
+        if indeterminate == 'x':
+            raise ValueError("Indeterminate 'x' is reserved. Please choose another indeterminate")
 
         if indeterminate == 'Chad':
             raise ValueError("While Chad is an awesome name, the indeterminate must be a single character")
@@ -126,11 +130,13 @@ class LaurentPolynomial(InputValidation):
         """
         LaurentPolynomial Class for representing Laurent polynomials
 
+        TODO Can we use real numbers in the expression?
         TODO Implement __floordiv__ method?
         TODO Implement reverse division methods
         TODO Implement _normalize method
         TODO Implement _sort method?
         TODO finish switching lists to tuples in the various methods
+        TODO __rpow__ method: Can we raise a number to an indeterminate?
 
         :param indeterminate: The character used to represent the polynomial
         :type indeterminate: str
@@ -217,6 +223,22 @@ class LaurentPolynomial(InputValidation):
 
             return polynomial
 
+    def __eq__(self, other):
+
+        other = self._format_polynomial(other)
+
+        if self.coefficients == other.coefficients and self.exponents == other.exponents:
+            return True
+        else:
+            return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __neg__(self):
+        return LaurentPolynomial(self.indeterminate, coefficients=tuple([-1 * coefficient for coefficient in self.coefficients]), exponents=self.exponents)
+
+
     def __add__(self, addend):
 
         # Ensure the input being added (the addend) is a LaurentPolynomial or throw an error
@@ -291,27 +313,53 @@ class LaurentPolynomial(InputValidation):
 
 
     def __pow__(self, power):
+        """
 
-        # TODO Verify negative exponentiation works properly
-        
-        polynomial = copy.deepcopy(self)
+        TODO Verify negative exponentiation works properly
+        TODO Is deep copy necessary?
+        TODO Remove special case for power = 0
+        (1+x)**2 = 1 + 2x + x**2
+        :param power:
+        :return:
+        """
 
-        for i in range(power-1):
-            polynomial = polynomial.__mul__(self)
+        sp = self._as_sympy_poly()
+        sp = sp**power
+        return self._as_laurent_poly(sp)
 
-        return polynomial
 
-    # TODO Implement __truediv__ method?
+    def __rpow__(self, base):
+        raise NotImplementedError
+
 
     def __truediv__(self, divisor):
-
+        # TODO Implement __truediv__ method?
         # Ensure the input being divided (the divisor) is a LaurentPolynomial or throw an error
         divisor = self._format_polynomial(divisor)
 
         if repr(divisor) == "0":
             raise ZeroDivisionError("Cannot divide by zero")
 
+        sp = self._as_sympy_poly()
+        sp = sp / divisor
+        return self._as_laurent_poly(sp)
+
+    def __rtruediv__(self, divisor):
         raise NotImplementedError
+
+    @staticmethod
+    def _as_laurent_poly(poly):
+
+        poly_dict = poly.as_dict()
+        coefficients = [int(coeff) for coeff in list(poly_dict.values())]
+        exponents = [int(exp[0]) for exp in list(poly_dict.keys())]
+
+        return LaurentPolynomial('A', coefficients, exponents)
+
+    def _as_sympy_poly(self):
+        x = symbols('x')
+        lp_dict = {(exp,): coeff for exp, coeff in zip(self.exponents, self.coefficients)}
+        return Poly(lp_dict, x)
 
     def _simplify_expression(self):
         

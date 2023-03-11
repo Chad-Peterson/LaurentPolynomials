@@ -1,27 +1,130 @@
-from src.laurentpolynomials.laurent_polynomial import LaurentPolynomial
-
-# Test Class Creation
+from laurentpolynomials.laurent_polynomial import LaurentPolynomial
 
 
-# Test Addition
+def test__str__():
+    pass
 
-def test_addition():
+
+def test__repr__():
+    pass
+
+
+def test__eq__():
+    a = LaurentPolynomial('A')
+
+    assert a == a
+    assert a == a + 0
+    assert a == a - 0
+
+
+def test__ne__():
+    a = LaurentPolynomial('A')
+
+    assert a != 0
+    assert a != 1
+    assert a != 1 + a
+
+
+def test__neg__():
+    a = LaurentPolynomial('A')
+
+    assert -a == -a
+    assert -a == a * (-1)
+    assert -a == a - 2 * a
+
+
+def test__add__():
     a = LaurentPolynomial('A')
 
     assert a + a == 2 * a
 
-# Test Subtraction
+
+def test__radd__():
+    pass
 
 
-# Test Multiplication
+def test__iadd__():
+    pass
 
 
-# Test Division
+def test__sub__():
+    a = LaurentPolynomial('A')
+
+    assert a - a == 0
+    assert a - 1 == a - 1
+    assert a - 1 == a + (-1)
+    assert a - 1 == a + (-1)
 
 
-# Test Exponentiation
+def test__rsub__():
+    a = LaurentPolynomial('A')
+
+    assert 1 - a == 1 - a
+    assert 1 - a == 1 + (-a)
 
 
-# Test Compound Arithmetic
+def test__isub__():
+    pass
 
-# Test Weird Stuff
+
+def test__mul__():
+    a = LaurentPolynomial('A')
+
+    assert a * a == a ** 2
+    assert a * 2 == 2 * a
+
+
+def test__rmul__():
+    a = LaurentPolynomial('A')
+
+    assert 2 * a == 2 * a
+    assert 2 * a == a * 2
+
+
+def test__imul__():
+    pass
+
+
+# def test__truediv__():
+#     a = LaurentPolynomial('A')
+#
+#     assert a / a == 1
+#     assert a / 2 == a * (1 / 2)
+#
+# def test__rtruediv__():
+#     a = LaurentPolynomial('A')
+#
+#     assert 2 / a == 2 * (1 / a)
+#
+# def test__itruediv__():
+#     pass
+
+def test__pow__():
+    a = LaurentPolynomial('A')
+
+    assert a ** 2 == a * a
+    assert a ** 3 == a * a * a
+    assert a ** 0 == 1
+    # assert a ** -1 == 1 / a
+
+
+# def test_simplify_expression():
+#     a = LaurentPolynomial('A')
+#
+#     assert a + a == 2 * a
+#     assert a - a == 0
+#     assert a * a == a ** 2
+#     assert a / a == 1
+#     assert a ** 2 == a * a
+#     assert a ** 3 == a * a * a
+#     assert a ** 0 == 1
+#     # assert a ** -1 == 1 / a
+#     assert (a+1) * (a+1) == (a+1) ** 2
+#     assert (a+1) * (a+1) == a**2 + 2*a + 1
+#     assert (a+1) * a == a**2 + a
+#     assert (a+1) * 2 == 2*a + 2
+
+def test_sort():
+    pass
+
+
