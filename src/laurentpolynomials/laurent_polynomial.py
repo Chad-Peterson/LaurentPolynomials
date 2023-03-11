@@ -137,6 +137,7 @@ class LaurentPolynomial(InputValidation):
         TODO Implement _sort method?
         TODO finish switching lists to tuples in the various methods
         TODO __rpow__ method: Can we raise a number to an indeterminate?
+        TODO Fix (1-a) -> (a-1) something is wrong with ordering.
 
         :param indeterminate: The character used to represent the polynomial
         :type indeterminate: str
@@ -173,7 +174,9 @@ class LaurentPolynomial(InputValidation):
 
                 # If the coefficient is zero, then don't show the term
 
+
                 # First, determine whether a leading + or - sign is needed
+
 
                 # If this is the first term, then don't show the addition sign (e.g., +1+x**2 --> 1+x**2)
                 # Note: It is okay to display a leading minus sign
@@ -188,7 +191,9 @@ class LaurentPolynomial(InputValidation):
                 else:
                     polynomial += "+"
 
+
                 # Next, determine how to show the coefficient
+
 
                 # If the coefficient is zero, then the whole term is zero --> don't show it
                 if coefficient == 0:
@@ -196,6 +201,9 @@ class LaurentPolynomial(InputValidation):
 
                 # Don't show a coefficient of one if the exponent is nonzero (e.g., 1x**2 --> x**2)
                 elif coefficient == 1 and exponent != 0:
+                    pass
+
+                elif coefficient == -1 and exponent != 0:
                     pass
 
                 # Otherwise show the coefficient (strip minus signs since this is already accounted for)
@@ -211,7 +219,9 @@ class LaurentPolynomial(InputValidation):
                 else:
                     polynomial += self.indeterminate
 
+
                 # Finally, determine how to show the exponent
+
 
                 # Don't show an exponent of zero or one (e.g., A**0 --> A, A**1 --> A)
                 if exponent == 0 or exponent == 1:
@@ -386,17 +396,21 @@ class LaurentPolynomial(InputValidation):
         self.coefficients, self.exponents = new_coefficients, new_exponents
 
     def _sort(self):
-        pass
+        """
+        Sort the coefficients and exponents by exponent
+        :return:
+        """
+        self.exponents, self.coefficients = zip(*sorted(zip(self.exponents, self.coefficients)))
 
     def _normalize(self):
         pass
 
 
-A = LaurentPolynomial('A')
-
-aa = (A+1)*(A+1)
-
-print(aa)
+# A = LaurentPolynomial('A')
+#
+# aa = (A+1)*(A+1)
+#
+# print(aa)
 
 # print('A', A)
 #

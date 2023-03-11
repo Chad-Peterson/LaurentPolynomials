@@ -6,13 +6,13 @@ a = LaurentPolynomial('A')
 
 
 
-b = (a+1)**0
+# b = (a+1)**0
+#
+# print(b)
 
-print(b)
+# x = symbols('x')
 
-x = symbols('x')
-
-eq1 = Poly((x+1)*(x-1)*(x+1)**(-1))
+# eq1 = Poly((x+1)*(x-1)*(x+1)**(-1))
 
 
 
@@ -23,4 +23,12 @@ eq1 = Poly((x+1)*(x-1)*(x+1)**(-1))
 #
 # print(as_sympy_poly(lp1.coefficients, lp1.exponents))
 
+eq1 = (1 - a)
+eq2 = (1 + -a)
 
+
+eq1._sort()
+eq2._sort()
+
+print(eq1)
+print(eq2)
