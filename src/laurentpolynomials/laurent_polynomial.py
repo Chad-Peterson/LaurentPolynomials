@@ -152,13 +152,12 @@ class LaurentPolynomial(InputValidation):
 
         self._simplify_expression()
 
-        self.normalize = normalize
+        self._normalize()
 
 
     def __repr__(self):
 
         # TODO Implement the self.order kwargs
-        # TODO Implement the power sign as a carrot or an asterisk?
 
         # If the polynomial only contains a single indeterminate with a coefficient of zero, then the polynomial is zero
         if self.coefficients == [0] and self.exponents == [0]:
@@ -414,7 +413,7 @@ class LaurentPolynomial(InputValidation):
 
     def _normalize(self):
         """
-        TODO Implement _normalize method
+        TODO Implement the _normalize method
         """
         pass
 
