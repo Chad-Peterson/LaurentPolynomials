@@ -32,9 +32,6 @@ class InputValidation:
         if indeterminate == 'x':
             raise ValueError("Indeterminate 'x' is reserved. Please choose another indeterminate")
 
-        if indeterminate == 'Chad':
-            raise ValueError("While Chad is an awesome name, the indeterminate must be a single character")
-
         if len(indeterminate) != 1:
             raise ValueError("The indeterminate must be a single character")
 
@@ -49,7 +46,7 @@ class InputValidation:
         if type(coefficients) != tuple:
 
             if type(coefficients) == list:
-                warn("The coefficients should be a tuple, not a list. Converting to a tuple")
+                # warn("The coefficients should be a tuple, not a list. Converting to a tuple")
                 coefficients = tuple(coefficients)
             else:
                 raise TypeError("The coefficients must be a tuple")
@@ -68,13 +65,13 @@ class InputValidation:
         # TODO Can Laurent polynomials have non-integer exponents?
 
         if type(exponents) in [int, float]:
-            warn("The exponents should be a tuple, not a single number. Converting to a list")
+            # warn("The exponents should be a tuple, not a single number. Converting to a list")
             exponents = (exponents,)
 
         if type(exponents) != tuple:
 
             if type(exponents) == list:
-                warn("The exponents should be a tuple, not a list. Converting to a tuple")
+                # warn("The exponents should be a tuple, not a list. Converting to a tuple")
                 exponents = tuple(exponents)
             else:
                 raise TypeError("The exponents must be a tuple")
@@ -110,7 +107,7 @@ class InputValidation:
             return user_input
 
         elif isinstance(user_input, int) or isinstance(user_input, float):
-            warn("Converting input to a LaurentPolynomial with a single term")
+            # warn("Converting input to a LaurentPolynomial with a single term")
             coefficients = (user_input,)
             exponents    = (0,)
             return LaurentPolynomial(self.indeterminate, coefficients=coefficients, exponents=exponents)
@@ -134,7 +131,6 @@ class LaurentPolynomial(InputValidation):
         TODO Implement __floordiv__ method?
         TODO Implement reverse division methods
         TODO Implement _normalize method
-        TODO Implement _sort method?
         TODO finish switching lists to tuples in the various methods
         TODO __rpow__ method: Can we raise a number to an indeterminate?
         TODO Fix (1-a) -> (a-1) something is wrong with ordering.
@@ -152,9 +148,12 @@ class LaurentPolynomial(InputValidation):
         """
         super(LaurentPolynomial, self).__init__(indeterminate, coefficients, exponents, order)
 
+        self._sort()
+
         self._simplify_expression()
 
         self.normalize = normalize
+
 
     def __repr__(self):
 
@@ -277,11 +276,19 @@ class LaurentPolynomial(InputValidation):
         return self.__add__(addend)
 
     def __sub__(self, subtrahend):
-        
+        """
+        Subtraction is just addition with a negative sign.
+        E.g., x-1 == x + (-1)
+        """
         return self.__add__(-1*subtrahend)
 
     def __rsub__(self, subtrahend):
-        return self.__add__(-1*subtrahend)
+        """
+        When subtracting in reverse, the subtrahend is the negative of the minuend.
+        E.g., 1 - x == (-1)*x + 1
+        """
+        self = (-1) * self
+        return self.__add__(subtrahend)
 
     def __mul__(self, multiple):
 
@@ -361,8 +368,8 @@ class LaurentPolynomial(InputValidation):
     def _as_laurent_poly(poly):
 
         poly_dict = poly.as_dict()
-        coefficients = [int(coeff) for coeff in list(poly_dict.values())]
-        exponents = [int(exp[0]) for exp in list(poly_dict.keys())]
+        coefficients = tuple(int(coeff) for coeff in list(poly_dict.values()))
+        exponents = tuple(int(exp[0]) for exp in list(poly_dict.keys()))
 
         return LaurentPolynomial('A', coefficients, exponents)
 
@@ -371,14 +378,24 @@ class LaurentPolynomial(InputValidation):
         lp_dict = {(exp,): coeff for exp, coeff in zip(self.exponents, self.coefficients)}
         return Poly(lp_dict, x)
 
+    def _sort(self):
+        """
+        Sort the coefficients and exponents by exponent
+        :return:
+        """
+        self.exponents, self.coefficients = zip(*sorted(zip(self.exponents, self.coefficients)))
+
     def _simplify_expression(self):
         
         new_coefficients = []
         new_exponents = []
 
         for coefficient, exponent in zip(self.coefficients, self.exponents):
-                
-            if coefficient != 0 and exponent not in new_exponents:
+
+            if coefficient == 0 and exponent == 0:
+                pass
+
+            elif coefficient != 0 and exponent not in new_exponents:
                 new_coefficients.append(coefficient)
                 new_exponents.append(exponent)
 
@@ -388,21 +405,17 @@ class LaurentPolynomial(InputValidation):
             else:
                 pass
 
-            # If the lists are completely empty, add a zero term
-            if len(new_coefficients) == 0 and len(new_exponents) == 0:
-                new_coefficients.append(0)
-                new_exponents.append(0)
+        # If the lists are completely empty, add a zero term
+        if len(new_coefficients) == 0 and len(new_exponents) == 0:
+            new_coefficients.append(0)
+            new_exponents.append(0)
 
         self.coefficients, self.exponents = new_coefficients, new_exponents
 
-    def _sort(self):
-        """
-        Sort the coefficients and exponents by exponent
-        :return:
-        """
-        self.exponents, self.coefficients = zip(*sorted(zip(self.exponents, self.coefficients)))
-
     def _normalize(self):
+        """
+        TODO Implement _normalize method
+        """
         pass
 
 

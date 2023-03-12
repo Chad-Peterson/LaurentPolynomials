@@ -61,6 +61,9 @@ def test__rsub__():
 
     assert 1 - a == 1 - a
     assert 1 - a == 1 + (-a)
+    assert 1 - (-a) == 1 + a
+    assert 1 - 2*a**2 + 2*a == -2*a**2 + 2*a + 1
+    assert 1 - (2*a**2 + 2*a) == -2*a**2 - 2*a + 1
 
 
 def test__isub__():
@@ -72,6 +75,8 @@ def test__mul__():
 
     assert a * a == a ** 2
     assert a * 2 == 2 * a
+    assert a * 2 == a + a
+
 
 
 def test__rmul__():
