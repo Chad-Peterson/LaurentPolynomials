@@ -10,7 +10,7 @@ a = LaurentPolynomial('A')
 #
 # print(b)
 
-# x = symbols('x')
+x = symbols('x')
 
 # eq1 = Poly((x+1)*(x-1)*(x+1)**(-1))
 
@@ -38,11 +38,5 @@ a = LaurentPolynomial('A')
 
 
 
-eq1 = 1/a
+eq1 = a/a
 print('eq1:', eq1)
-
-eq2 = a**(-1)
-print('eq2:', eq2)
-
-eq3 = eq1 == eq2
-print('eq3:', eq3)

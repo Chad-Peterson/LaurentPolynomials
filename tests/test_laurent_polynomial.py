@@ -90,12 +90,12 @@ def test__imul__():
     pass
 
 
-# def test__truediv__():
-#     a = LaurentPolynomial('A')
-#
-#     assert a / a == 1
-#     assert a / 2 == a * (1 / 2)
-#
+def test__truediv__():
+    a = LaurentPolynomial('A')
+
+    assert a / a == 1
+    assert a / 2 == a * (1 / 2)
+
 # def test__rtruediv__():
 #     a = LaurentPolynomial('A')
 #

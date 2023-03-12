@@ -5,6 +5,7 @@
 from typing import Union
 from warnings import warn
 import copy
+import sympy
 from sympy import symbols, Poly
 
 
@@ -241,11 +242,40 @@ class LaurentPolynomial(InputValidation):
         else:
             return False
 
+
     def __ne__(self, other):
         return not self.__eq__(other)
 
     def __neg__(self):
         return LaurentPolynomial(self.indeterminate, coefficients=tuple([-1 * coefficient for coefficient in self.coefficients]), exponents=self.exponents)
+
+    def __gt__(self, other):
+        # TODO Write unit tests for this method
+        # TODO Finish implementing method
+        if isinstance(other, LaurentPolynomial):
+            max_index = self.exponents.index(max(self.exponents))
+            max_index_other = other.exponents.index(max(other.exponents))
+
+            if self.exponents[max_index] > other.exponents[max_index_other]:
+                return True
+            elif self.exponents[max_index] == other.exponents[max_index_other]:
+                if self.coefficients[max_index] > other.coefficients[max_index_other]:
+                    return True
+                else:
+                    return False
+            else:
+                return False
+
+        elif isinstance(other, int) or isinstance(other, float):
+            raise NotImplementedError("Comparison of LaurentPolynomial to int or float not yet implemented.")
+
+        else:
+            raise TypeError("Polynomial must be of type LaurentPolynomial, int, or float.")
+
+    def __lt__(self, other):
+        pass
+    def __ge__(self, other):
+        return self.__gt__(other) or self.__eq__(other)
 
 
     def __add__(self, addend):
@@ -356,20 +386,28 @@ class LaurentPolynomial(InputValidation):
 
 
     def __truediv__(self, divisor):
-        # TODO Fix __truediv__ method
 
-        # TODO is this necessary?
-        # Ensure the input being divided (the divisor) is a LaurentPolynomial or throw an error
-        # divisor = self._format_polynomial(divisor)
+        if isinstance(divisor, LaurentPolynomial):
+            divisor = divisor._as_sympy_poly()
+            sp = self._as_sympy_poly()
+            sp = sp/divisor
+            return self._as_laurent_poly(sp)
+        else:
 
-        if repr(divisor) == "0":
-            raise ZeroDivisionError("Cannot divide by zero")
+            # TODO Fix __truediv__ method
 
-        sp = self._as_sympy_poly()
-        sp = sp / divisor
+            # TODO is this necessary?
+            # Ensure the input being divided (the divisor) is a LaurentPolynomial or throw an error
+            # divisor = self._format_polynomial(divisor)
 
-        # TODO just do 1/divisor and then multiply by self?
-        return self._as_laurent_poly(sp)
+            if repr(divisor) == "0":
+                raise ZeroDivisionError("Cannot divide by zero")
+
+            sp = self._as_sympy_poly()
+            sp = Poly(sp / divisor)
+
+            # TODO just do 1/divisor and then multiply by self?
+            return self._as_laurent_poly(sp)
 
     def __rtruediv__(self, divisor):
 
@@ -380,20 +418,26 @@ class LaurentPolynomial(InputValidation):
     @staticmethod
     def _as_laurent_poly(poly, sign='positive'):
 
-        poly_dict = poly.as_dict()
+        if isinstance(poly, sympy.polys.polytools.Poly):
 
-        if sign == 'positive':
-            coefficients = tuple(int(coeff) for coeff in list(poly_dict.values()))
-            exponents = tuple(int(exp[0]) for exp in list(poly_dict.keys()))
-        elif sign == 'negative':
-            coefficients = tuple(int(coeff) for coeff in list(poly_dict.values()))
-            exponents = tuple(int(-exp[0]) for exp in list(poly_dict.keys()))
+            poly_dict = poly.as_dict()
+
+            if sign == 'positive':
+                coefficients = tuple(float(coeff) for coeff in list(poly_dict.values()))
+                exponents = tuple(int(exp[0]) for exp in list(poly_dict.keys()))
+            elif sign == 'negative':
+                coefficients = tuple(int(coeff) for coeff in list(poly_dict.values()))
+                exponents = tuple(int(-exp[0]) for exp in list(poly_dict.keys()))
+            else:
+                raise ValueError("Sign must be either 'positive' or 'negative'")
+
+
+            return LaurentPolynomial('A', coefficients, exponents)
+
         else:
-            raise ValueError("Sign must be either 'positive' or 'negative'")
+            return int(poly)
 
 
-
-        return LaurentPolynomial('A', coefficients, exponents)
 
     def _as_sympy_poly(self):
         x = symbols('x')
