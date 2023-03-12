@@ -38,4 +38,11 @@ a = LaurentPolynomial('A')
 
 
 
-e = a+0
+eq1 = 1/a
+print('eq1:', eq1)
+
+eq2 = a**(-1)
+print('eq2:', eq2)
+
+eq3 = eq1 == eq2
+print('eq3:', eq3)

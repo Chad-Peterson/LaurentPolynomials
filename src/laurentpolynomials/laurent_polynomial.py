@@ -127,6 +127,7 @@ class LaurentPolynomial(InputValidation):
         """
         LaurentPolynomial Class for representing Laurent polynomials
 
+        TODO Make Laurent Polynomials subscriptable by monomial
         TODO Can we use real numbers in the expression?
         TODO Implement __floordiv__ method?
         TODO Implement reverse division methods
@@ -340,8 +341,14 @@ class LaurentPolynomial(InputValidation):
         """
 
         sp = self._as_sympy_poly()
-        sp = sp**power
-        return self._as_laurent_poly(sp)
+
+        if power >= 0:
+            sp = Poly(sp.pow(power))
+            return self._as_laurent_poly(sp)
+        else:
+            sp = Poly(sp.pow(-1 * power))
+            # sp = 1 / sp
+            return self._as_laurent_poly(sp, sign='negative')
 
 
     def __rpow__(self, base):
@@ -349,26 +356,42 @@ class LaurentPolynomial(InputValidation):
 
 
     def __truediv__(self, divisor):
-        # TODO Implement __truediv__ method?
+        # TODO Fix __truediv__ method
+
+        # TODO is this necessary?
         # Ensure the input being divided (the divisor) is a LaurentPolynomial or throw an error
-        divisor = self._format_polynomial(divisor)
+        # divisor = self._format_polynomial(divisor)
 
         if repr(divisor) == "0":
             raise ZeroDivisionError("Cannot divide by zero")
 
         sp = self._as_sympy_poly()
         sp = sp / divisor
+
+        # TODO just do 1/divisor and then multiply by self?
         return self._as_laurent_poly(sp)
 
     def __rtruediv__(self, divisor):
-        raise NotImplementedError
+
+
+        return self.__pow__(-divisor)
+
 
     @staticmethod
-    def _as_laurent_poly(poly):
+    def _as_laurent_poly(poly, sign='positive'):
 
         poly_dict = poly.as_dict()
-        coefficients = tuple(int(coeff) for coeff in list(poly_dict.values()))
-        exponents = tuple(int(exp[0]) for exp in list(poly_dict.keys()))
+
+        if sign == 'positive':
+            coefficients = tuple(int(coeff) for coeff in list(poly_dict.values()))
+            exponents = tuple(int(exp[0]) for exp in list(poly_dict.keys()))
+        elif sign == 'negative':
+            coefficients = tuple(int(coeff) for coeff in list(poly_dict.values()))
+            exponents = tuple(int(-exp[0]) for exp in list(poly_dict.keys()))
+        else:
+            raise ValueError("Sign must be either 'positive' or 'negative'")
+
+
 
         return LaurentPolynomial('A', coefficients, exponents)
 
