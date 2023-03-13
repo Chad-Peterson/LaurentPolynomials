@@ -38,5 +38,6 @@ x = symbols('x')
 
 
 
-eq1 = a/a
-print('eq1:', eq1)
+assert a ** 2 == a * a
+assert a ** 3 == a * a * a
+assert a ** 0 == 1

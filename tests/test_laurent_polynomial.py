@@ -1,6 +1,17 @@
 from laurentpolynomials.laurent_polynomial import LaurentPolynomial
 
 
+def test__init__():
+    a = LaurentPolynomial('A')
+
+    # Creating an object with no arguments should create the indeterminate
+    assert repr(a) == 'A'
+
+    # Creating objects with the same exponents should simplify
+    a1 = LaurentPolynomial('A', (1, 1, 1), (1, 1, 1))
+    assert a1 == 3*a
+
+
 def test__str__():
     pass
 

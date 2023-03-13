@@ -304,10 +304,6 @@ class LaurentPolynomial(InputValidation):
         # Ensure the input being multiple (the multiple) is a LaurentPolynomial or throw an error
         multiple = self._format_polynomial(multiple)
 
-        # If either polynomial is zero, then the product is zero
-        # if multiple == 0:
-        #     return LaurentPolynomial(self.term, coefficients=[0], exponents=[0])
-
         product_coefficients = []
         product_exponents = []
 
@@ -335,7 +331,8 @@ class LaurentPolynomial(InputValidation):
         :return:
         """
 
-        power = self._format_polynomial(power)
+        if isinstance(power, LaurentPolynomial):
+            raise TypeError("LaurentPolynomial objects cannot be raised to a LaurentPolynomial power")
 
         sp = self._as_sympy_poly()
 
@@ -344,7 +341,6 @@ class LaurentPolynomial(InputValidation):
             return self._as_laurent_poly(sp)
         else:
             sp = Poly(sp.pow(-1 * power))
-            # sp = 1 / sp
             return self._as_laurent_poly(sp, sign='negative')
 
 
@@ -396,13 +392,57 @@ class LaurentPolynomial(InputValidation):
         :return: True if the polynomial is a constant, False otherwise
         """
 
-        if self._is_monomial():
+        if not self._is_monomial():
             raise ValueError("Polynomial is not a monomial")
 
         if self.exponents == [0]:
             return True
         else:
             return False
+
+    def _is_zero(self):
+        """
+        :return: True if the polynomial is zero, False otherwise
+        """
+        if self.coefficients == [0]:
+            return True
+        else:
+            return False
+
+    def _is_positive(self):
+        """
+        :return: True if the polynomial is positive, False otherwise
+        """
+
+        if len(self.coefficients) > 1:
+            raise ValueError("Polynomial is not a constant")
+
+        if self.coefficients[0] > 0:
+            return True
+        else:
+            return False
+
+    def _is_negative(self):
+        """
+        :return: True if the polynomial is negative, False otherwise
+        """
+
+        if len(self.coefficients) > 1:
+            raise ValueError("Polynomial is not a constant")
+
+        if self.coefficients[0] < 0:
+            return True
+        else:
+            return False
+
+    def _as_constant(self):
+        """
+        :return: The polynomial as an integer
+        """
+        if self._is_constant():
+            return int(self.coefficients[0])
+        else:
+            raise ValueError("Polynomial is not a constant")
 
     @staticmethod
     def _as_laurent_poly(poly, sign='positive'):
