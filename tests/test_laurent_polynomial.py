@@ -98,6 +98,8 @@ def test__isub__():
 def test__mul__():
     a = LaurentPolynomial('A')
 
+    assert a * 0 == LaurentPolynomial('A', (0,), (0,))
+
     assert a * a == a ** 2
     assert a * 2 == 2 * a
     assert a * 2 == a + a
@@ -121,9 +123,8 @@ def test__rmul__():
 
     a = LaurentPolynomial('A')
 
-    # assert a * 0 == LaurentPolynomial('A',(1,),(0,))
+    assert 0 * a == LaurentPolynomial('A', (0,), (0,))
 
-    # assert a * 1 == 1
 
     assert 2 * a == 2 * a
     assert 2 * a == a * 2
