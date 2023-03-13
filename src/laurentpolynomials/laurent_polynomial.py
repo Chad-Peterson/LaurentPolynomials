@@ -6,7 +6,7 @@ from typing import Union
 from warnings import warn
 import copy
 import sympy
-from sympy import symbols, Poly
+from sympy import symbols, Poly, Expr
 
 
 class InputValidation:
@@ -350,11 +350,44 @@ class LaurentPolynomial(InputValidation):
 
     def __truediv__(self, divisor):
 
+        divisor_copy = divisor
+        # TODO Come up with more reliable logic
+
+        if isinstance(divisor, LaurentPolynomial) and divisor._is_monomial():
+            return self.__mul__(divisor.__pow__(-1))
+
         if isinstance(divisor, LaurentPolynomial):
+
             divisor = divisor._as_sympy_poly()
             sp = self._as_sympy_poly()
-            sp = sp/divisor
-            return self._as_laurent_poly(sp)
+
+            # If the resulting expression is a constant, then return a constant (int or float)
+            if isinstance(sp/divisor, sympy.core.numbers.Integer):
+                return int(sp/divisor)
+
+            elif isinstance(sp/divisor, sympy.core.numbers.Float):
+                return float(sp/divisor)
+
+            elif isinstance(sp/divisor, sympy.core.mul.Mul):
+                # TODO Handle negative terms
+
+                num, denom, = (sp/divisor).as_numer_denom()
+
+                # If numerator is a constant, then the denominator is
+                if num.is_number:
+                    self = self.__pow__(-1)
+                    return self.__mul__(1/divisor_copy)
+
+                sp = Poly(sp/divisor)
+                return self._as_laurent_poly(sp)
+
+            elif isinstance(sp/divisor, sympy.polys.polytools.Poly):
+                return self._as_laurent_poly(sp/divisor)
+
+            else:
+                sp = float(sp/divisor)
+                return self._as_laurent_poly(sp)
+
         else:
 
             # TODO Fix __truediv__ method
@@ -457,7 +490,7 @@ class LaurentPolynomial(InputValidation):
                 coefficients = tuple(float(coeff) for coeff in list(poly_dict.values()))
                 exponents = tuple(int(exp[0]) for exp in list(poly_dict.keys()))
             elif sign == 'negative':
-                coefficients = tuple(int(coeff) for coeff in list(poly_dict.values()))
+                coefficients = tuple(1/float(coeff) for coeff in list(poly_dict.values()))
                 exponents = tuple(int(-exp[0]) for exp in list(poly_dict.keys()))
             else:
                 raise ValueError("Sign must be either 'positive' or 'negative'")
@@ -466,7 +499,8 @@ class LaurentPolynomial(InputValidation):
             return LaurentPolynomial('A', coefficients, exponents)
 
         else:
-            return int(poly)
+            # TODO Other than int?
+            return float(poly)
 
 
 

@@ -1,5 +1,5 @@
 from laurentpolynomials.laurent_polynomial import LaurentPolynomial
-from sympy import symbols, Poly
+from sympy import symbols, Poly, Expr
 
 a = LaurentPolynomial('A')
 
@@ -38,6 +38,4 @@ x = symbols('x')
 
 
 
-assert a ** 2 == a * a
-assert a ** 3 == a * a * a
-assert a ** 0 == 1
+a / (2 * a)

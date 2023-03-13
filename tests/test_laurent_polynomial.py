@@ -128,6 +128,7 @@ def test__rmul__():
     assert 2 * a == 2 * a
     assert 2 * a == a * 2
     assert 2 * a == a + a
+    assert a**2/a == a
 
 
 def test__rmul__compound():
@@ -143,25 +144,36 @@ def test__imul__():
     pass
 
 
-def test__truediv__():
+def test__truediv__monomial_nom_monomial_denom():
     a = LaurentPolynomial('A')
 
     assert a / a == 1
     assert a / 2 == a * (1 / 2)
-    # assert a/ (2*a) == 1 / 2
-    # assert a / (2*a) == 1 / (2*a)
+    assert a / (2 * a) == 1 / 2
+    assert a / a**2 == 1 / a == a**(-1)
+    assert a / (2*a) == 1 / 2
+    assert a / (2*a) == (1*a) / (2*a)
 
-def test__truediv__compound():
-    pass
+def test__truediv__binomial_nom_monomial_denom():
+    a = LaurentPolynomial('A')
+
+    assert (2*a+1) / a == 2 + 1/a
+    assert (2*a+1) / 1 == 2*a + 1
+
+# def test__truediv__monomial_nom_binomial_denom():
+#     a = LaurentPolynomial('A')
+#
+#     assert a / (2*a+1) == 1/2 * 1/(a+1/2)
+
+# def test__truediv__binomial_nom_binomial_denom():
+#     pass
 
 
 def test__rtruediv__():
     a = LaurentPolynomial('A')
 
     assert 2 / a == 2 * (1 / a)
-#
-# def test__itruediv__():
-#     pass
+
 
 def test__pow__():
     # TODO Test raising exceptions
@@ -172,6 +184,8 @@ def test__pow__():
     assert a ** 0 == 1
     assert a ** -1 == 1 / a
     assert (a+1) ** 2 == (a+1) * (a+1)
+    assert (2 * a) ** -1 == 1/2 * a**(-1)
+
 
 def test_simplify_expression():
     a = LaurentPolynomial('A')
