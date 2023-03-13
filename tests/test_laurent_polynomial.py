@@ -38,6 +38,20 @@ def test__add__():
 
     assert a + a == 2 * a
 
+    # Associative rule
+    assert (a + 1) + 2 == a + (1 + 2)
+    assert (a + 1) + 2 == (a + 2) + 1
+    assert (a + 1) + 2 == a + 3
+    assert (a + 1) + 2 == 3 + a
+
+    # Identity rule
+    assert a + 0 == 0 + a == a
+
+    # Additive inverse rule
+    assert a + (-a) == 0
+    assert a + (-a) == a - a
+    assert a + (-a) == (-a) + a
+
 
 def test__radd__():
     pass
@@ -77,13 +91,41 @@ def test__mul__():
     assert a * 2 == 2 * a
     assert a * 2 == a + a
 
+    # Identity rule
+    assert a * 1 == 1 * a == a
+
+
+def test__mul__compound():
+    a = LaurentPolynomial('A')
+
+    assert a * (2*a) == 2*a**2
+    assert 2*a * (2*a) == 4*a**2
+    assert (2*a + 1) * (2*a + 1) == 4*a**2 + 4*a + 1
+
 
 
 def test__rmul__():
+
+    # TODO Fix for zero
+
     a = LaurentPolynomial('A')
+
+    # assert a * 0 == LaurentPolynomial('A',(1,),(0,))
+
+    # assert a * 1 == 1
 
     assert 2 * a == 2 * a
     assert 2 * a == a * 2
+    assert 2 * a == a + a
+
+
+def test__rmul__compound():
+    a = LaurentPolynomial('A')
+    assert 2 * 2 * a == 4 * a
+    assert 2 * (2*a) == 4 * a
+    assert 2 * (2*a + 1) == 4 * a + 2
+    assert 2 * (2*a + 1) == 4 * (a + 1/2)
+    # assert 0 * a == 0
 
 
 def test__imul__():
@@ -95,6 +137,12 @@ def test__truediv__():
 
     assert a / a == 1
     assert a / 2 == a * (1 / 2)
+    # assert a/ (2*a) == 1 / 2
+    # assert a / (2*a) == 1 / (2*a)
+
+def test__truediv__compound():
+    pass
+
 
 # def test__rtruediv__():
 #     a = LaurentPolynomial('A')
@@ -105,6 +153,7 @@ def test__truediv__():
 #     pass
 
 def test__pow__():
+    # TODO Test raising exceptions
     a = LaurentPolynomial('A')
 
     assert a ** 2 == a * a

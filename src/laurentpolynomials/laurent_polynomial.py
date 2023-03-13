@@ -242,7 +242,6 @@ class LaurentPolynomial(InputValidation):
         else:
             return False
 
-
     def __ne__(self, other):
         return not self.__eq__(other)
 
@@ -250,33 +249,13 @@ class LaurentPolynomial(InputValidation):
         return LaurentPolynomial(self.indeterminate, coefficients=tuple([-1 * coefficient for coefficient in self.coefficients]), exponents=self.exponents)
 
     def __gt__(self, other):
-        # TODO Write unit tests for this method
-        # TODO Finish implementing method
-        if isinstance(other, LaurentPolynomial):
-            max_index = self.exponents.index(max(self.exponents))
-            max_index_other = other.exponents.index(max(other.exponents))
 
-            if self.exponents[max_index] > other.exponents[max_index_other]:
-                return True
-            elif self.exponents[max_index] == other.exponents[max_index_other]:
-                if self.coefficients[max_index] > other.coefficients[max_index_other]:
-                    return True
-                else:
-                    return False
-            else:
-                return False
+        other = self._format_polynomial(other)
 
-        elif isinstance(other, int) or isinstance(other, float):
-            raise NotImplementedError("Comparison of LaurentPolynomial to int or float not yet implemented.")
+        if self._is_constant() and other._is_constant():
+            return self.coefficients[0] > other.coefficients[0]
 
-        else:
-            raise TypeError("Polynomial must be of type LaurentPolynomial, int, or float.")
-
-    def __lt__(self, other):
-        pass
-    def __ge__(self, other):
-        return self.__gt__(other) or self.__eq__(other)
-
+        return self.degree > other.degree
 
     def __add__(self, addend):
 
@@ -322,21 +301,12 @@ class LaurentPolynomial(InputValidation):
 
     def __mul__(self, multiple):
 
-        """
-        (1+x) * (1+x) = (1+x)**2 = 1 + 2x + x**2
-
-        TODO check if need to expand...
-        TODO fix object creation statement
-        TODO Fix 0*self should be 0 (and simplify like terms before returning new object)
-        
-        """
-        
         # Ensure the input being multiple (the multiple) is a LaurentPolynomial or throw an error
         multiple = self._format_polynomial(multiple)
 
         # If either polynomial is zero, then the product is zero
-        if repr(multiple) == "0":
-            return LaurentPolynomial(self.term, coefficients=[0], exponents=[0])
+        # if multiple == 0:
+        #     return LaurentPolynomial(self.term, coefficients=[0], exponents=[0])
 
         product_coefficients = []
         product_exponents = []
@@ -351,10 +321,6 @@ class LaurentPolynomial(InputValidation):
 
         return LaurentPolynomial(self.indeterminate, coefficients=product_coefficients, exponents=product_exponents)
 
-
-    def __imul__(self, multiple):
-        return self.__mul__(multiple)
-
     def __rmul__(self, multiple):
         return self.__mul__(multiple)
 
@@ -362,13 +328,14 @@ class LaurentPolynomial(InputValidation):
     def __pow__(self, power):
         """
 
-        TODO Verify negative exponentiation works properly
         TODO Is deep copy necessary?
         TODO Remove special case for power = 0
         (1+x)**2 = 1 + 2x + x**2
         :param power:
         :return:
         """
+
+        power = self._format_polynomial(power)
 
         sp = self._as_sympy_poly()
 
@@ -412,8 +379,30 @@ class LaurentPolynomial(InputValidation):
     def __rtruediv__(self, divisor):
 
 
-        return self.__pow__(-divisor)
+        # return self.__pow__(-divisor)
+        raise NotImplementedError("Division of int or float by LaurentPolynomial not yet implemented.")
 
+    def _is_monomial(self):
+        """
+        :return: True if the polynomial is a monomial, False otherwise
+        """
+        if len(self.exponents) == 1:
+            return True
+        else:
+            return False
+
+    def _is_constant(self):
+        """
+        :return: True if the polynomial is a constant, False otherwise
+        """
+
+        if self._is_monomial():
+            raise ValueError("Polynomial is not a monomial")
+
+        if self.exponents == [0]:
+            return True
+        else:
+            return False
 
     @staticmethod
     def _as_laurent_poly(poly, sign='positive'):
