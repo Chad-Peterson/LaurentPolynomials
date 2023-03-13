@@ -1,4 +1,6 @@
 from laurentpolynomials.laurent_polynomial import LaurentPolynomial
+from cypari import pari
+from sympy import symbols, Poly, Expr
 
 
 def test__init__():
@@ -207,4 +209,7 @@ def test_simplify_expression():
 def test_sort():
     pass
 
+
+def test_as_laurent_poly():
+    pass
 

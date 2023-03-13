@@ -40,4 +40,10 @@ x = symbols('x')
 
 # a / (2 * a)
 
-a**2
+x1, x2 = symbols('x1 x2')
+syms = (x1, x2)    #  specify the desired order of symbols: do not rely on default order being what you want
+expr = 3*x1**(-2) - x1*x2 + 5*x2
+
+
+# todo fix as lp for this...
+Poly(expr).as_dict()
