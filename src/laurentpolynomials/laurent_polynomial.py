@@ -324,24 +324,35 @@ class LaurentPolynomial(InputValidation):
     def __pow__(self, power):
         """
 
-        TODO Is deep copy necessary?
-        TODO Remove special case for power = 0
-        (1+x)**2 = 1 + 2x + x**2
+
         :param power:
         :return:
         """
 
-        if isinstance(power, LaurentPolynomial):
-            raise TypeError("LaurentPolynomial objects cannot be raised to a LaurentPolynomial power")
+        power = self._format_polynomial(power)
 
-        sp = self._as_sympy_poly()
+        if not power._is_monomial():
+            raise TypeError("Power must be a monomial")
 
-        if power >= 0:
+        if not power._is_integer():
+            raise TypeError("Power must be an integer")
+
+        if power._is_positive():
+            sp = self._as_sympy_poly()
+            power = power._as_constant()
             sp = Poly(sp.pow(power))
             return self._as_laurent_poly(sp)
-        else:
+
+        elif power._is_zero():
+            return LaurentPolynomial(self.indeterminate, coefficients=[1], exponents=[0])
+
+        elif power._is_negative():
+            sp = self._as_sympy_poly()
+            power = power._as_constant()
             sp = Poly(sp.pow(-1 * power))
             return self._as_laurent_poly(sp, sign='negative')
+        else:
+            raise TypeError("IDK")
 
 
     def __rpow__(self, base):
@@ -467,6 +478,32 @@ class LaurentPolynomial(InputValidation):
 
         if self.coefficients[0] < 0:
             return True
+        else:
+            return False
+
+    def _is_integer(self):
+        """
+        :return: True if the polynomial is an integer, False otherwise
+        """
+
+        if len(self.coefficients) > 1:
+            raise ValueError("Polynomial is not a constant and therefore cannot be an integer")
+
+        if isinstance(self.coefficients[0], int):
+            return True
+
+        else:
+            return False
+
+    def _is_rational(self):
+        """
+        :return: True if the polynomial is rational, False otherwise
+        """
+        if self._is_constant():
+            if self._is_integer():
+                return True
+            else:
+                return False
         else:
             return False
 
