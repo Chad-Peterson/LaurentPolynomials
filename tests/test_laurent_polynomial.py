@@ -155,10 +155,10 @@ def test__truediv__compound():
     pass
 
 
-# def test__rtruediv__():
-#     a = LaurentPolynomial('A')
-#
-#     assert 2 / a == 2 * (1 / a)
+def test__rtruediv__():
+    a = LaurentPolynomial('A')
+
+    assert 2 / a == 2 * (1 / a)
 #
 # def test__itruediv__():
 #     pass
@@ -170,24 +170,24 @@ def test__pow__():
     assert a ** 2 == a * a
     assert a ** 3 == a * a * a
     assert a ** 0 == 1
-    # assert a ** -1 == 1 / a
+    assert a ** -1 == 1 / a
+    assert (a+1) ** 2 == (a+1) * (a+1)
 
+def test_simplify_expression():
+    a = LaurentPolynomial('A')
 
-# def test_simplify_expression():
-#     a = LaurentPolynomial('A')
-#
-#     assert a + a == 2 * a
-#     assert a - a == 0
-#     assert a * a == a ** 2
-#     assert a / a == 1
-#     assert a ** 2 == a * a
-#     assert a ** 3 == a * a * a
-#     assert a ** 0 == 1
-#     # assert a ** -1 == 1 / a
-#     assert (a+1) * (a+1) == (a+1) ** 2
-#     assert (a+1) * (a+1) == a**2 + 2*a + 1
-#     assert (a+1) * a == a**2 + a
-#     assert (a+1) * 2 == 2*a + 2
+    assert a + a == 2 * a
+    assert a - a == 0
+    assert a * a == a ** 2
+    assert a / a == 1
+    assert a ** 2 == a * a
+    assert a ** 3 == a * a * a
+    assert a ** 0 == 1
+    assert a ** -1 == 1 / a
+    assert (a+1) * (a+1) == (a+1) ** 2
+    assert (a+1) * (a+1) == a**2 + 2*a + 1
+    assert (a+1) * a == a**2 + a
+    assert (a+1) * 2 == 2*a + 2
 
 def test_sort():
     pass

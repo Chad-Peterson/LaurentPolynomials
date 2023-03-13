@@ -373,10 +373,12 @@ class LaurentPolynomial(InputValidation):
             return self._as_laurent_poly(sp)
 
     def __rtruediv__(self, divisor):
+        """
+        Reverse multiplication is equivalent to multiplying the constant by an inverted indeterminate.
+        """
+        self = self.__pow__(-1)
+        return self.__mul__(divisor)
 
-
-        # return self.__pow__(-divisor)
-        raise NotImplementedError("Division of int or float by LaurentPolynomial not yet implemented.")
 
     def _is_monomial(self):
         """
